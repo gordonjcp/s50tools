@@ -1,0 +1,4 @@
+build/
+s50tool.c~
+.lock-wafbuild
+.waf-1.6.4-4913990afc8fed85c536a94360eda2ab
