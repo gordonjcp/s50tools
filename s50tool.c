@@ -22,20 +22,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 void usage() {
 	// show some quick help
-	printf("\ns50tool\nWrite samples onto Roland S-series diskettes\n\n");
+	printf("Usage: s50tool [options] [drive or image] samplename\nWrite samples onto Roland S-series diskettes\n");
+	printf("if [drive or image] is omitted, /dev/fd0 is used\n\n");
 	printf("options:\n\t-b [bank]\tSelect bank (A-B, default A)\n\t-i\t\tInitialise tone parameters\n");
 	printf("\t-r [note]\tSet root note of sample (default 60, middle C)\n");
 	printf("\t-s [block]\tStart block for sample (0-18, default 0)\n\t-t [tone]\tTone to write (1-32, default 1)\n");
 }	
 
+char *l_basename(char *in) {
+	// horrible bodgy basename() implementation
+	// I couldn't get GNU basename() to work
+	char *pos;
+	pos = strrchr(in, '/');
+	return pos?pos+1:in;
+}
+
 int main (int argc, char **argv) {
 	// parse command line, work out what we're going to do
 	
 	char c;
-	
+	char path[256];		// path for device or filename
+	char tonename[8];   // name of tone, derived from sample name
 	// parameters
 	int tone = 1;
 	int bank = 0;
@@ -55,8 +66,6 @@ int main (int argc, char **argv) {
 	// note that the tone numbers are 1-based and run from 1-32
 	// on the S-50 tones are numbered 11-18, 21-28, 31-38 and 41-48
 
-	printf("argc=%d\n", argc);
-
 	// loop over optional arguments
 	while ( (c = getopt(argc, argv, "b:hir:s:t:")) != -1) {
 		switch(c) {
@@ -67,7 +76,7 @@ int main (int argc, char **argv) {
 			case 'r': rootkey = atoi(optarg); break;
 			case 's': start = atoi(optarg); break;
 			case 't': tone = atoi(optarg); break;
-			case 'h': usage();
+			case 'h': usage(); exit(0);
 		}
 	}
 	
@@ -80,8 +89,27 @@ int main (int argc, char **argv) {
 		exit(1);
 	}
 	
+	if ((argc - optind) == 0) {
+		usage();
+		exit(1);
+	}
+	
+	
+	
+	if ((argc-optind) == 1) {   // only have a sample name
+		
+		
+		//printf("%x\n",l_basename(argv[optind++]));
+		strncpy(tonename, l_basename(argv[optind++]), 8);
+		printf("%s\n", tonename);
+	}
+	
+	if ((argc-optind) == 2) {   // have device name and sample name
+	
+	}
 	// if we have one option remaining, it's the sample name
 	// if there's two, the first is the device or image to write to
+	/*
 	printf("remaining: %d\n", argc-optind);
 	
 	    if (optind < argc) {
@@ -90,5 +118,7 @@ int main (int argc, char **argv) {
             printf ("%s ", argv[optind++]);
         printf ("\n");
     }
+    
+    */
 	
 }
