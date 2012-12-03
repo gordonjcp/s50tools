@@ -31,6 +31,7 @@
 #include "roland.h"
 
 
+
 void usage() {
 	// show some quick help
 	printf("Usage: s50tool [options] [drive or image] samplename\nWrite samples onto Roland S-series diskettes\n");
@@ -53,7 +54,7 @@ int main (int argc, char **argv) {
 	
 	char c;
 	char path[256] = "/dev/fd0";		// path for device or filename
-	char tonename[8];   // name of tone, derived from sample name
+
 	FILE *disk;
 	SNDFILE *wave;
 	SF_INFO wave_info;
@@ -61,13 +62,12 @@ int main (int argc, char **argv) {
 	int bl_len, fr_len;
 
 	// parameters
-	int tone = 1;
-	int bank = 0;
-	int start = 0;
-	int truncate = 0;
-	int rootkey = 0x48;
-	
 	char initialise=0;
+	
+	param.tone = 1;
+	param.bank = 0;
+	param.start = 0;
+	param.rootkey = 0x48;
 	
 	// arguments:
 	// -b bank (default: A)
@@ -83,21 +83,21 @@ int main (int argc, char **argv) {
 	while ( (c = getopt(argc, argv, "b:hir:s:t:")) != -1) {
 		switch(c) {
 			case 'b':
-				if (optarg == "b" || optarg == "B") bank = 1; // don't need to bother if it's A
+				if (optarg == "b" || optarg == "B") param.bank = 1; // don't need to bother if it's A
 				break;
 			case 'i': initialise = 1; break;
-			case 'r': rootkey = atoi(optarg); break;
-			case 's': start = atoi(optarg); break;
-			case 't': tone = atoi(optarg); break;
+			case 'r': param.rootkey = atoi(optarg); break;
+			case 's': param.start = atoi(optarg); break;
+			case 't': param.tone = atoi(optarg); break;
 			case 'h': usage(); exit(0);
 		}
 	}
 	
-	if (start > 17 || start < 0) {
+	if (param.start > 17 || param.start < 0) {
 		fprintf(stderr, "start block must be between 0 and 17\n");
 		exit(1);
 	}
-	if (tone > 32 || tone < 1) {
+	if (param.tone > 32 || param.tone < 1) {
 		fprintf(stderr, "tone must be between 1 and 32\n");
 		exit(1);
 	}
@@ -108,12 +108,12 @@ int main (int argc, char **argv) {
 	}
 
 	if ((argc-optind) == 1) {   // only have a sample name
-		strncpy(tonename, l_basename(argv[optind]), 8);
+		strncpy(param.tonename, l_basename(argv[optind]), 8);
 	}
 	
 	if ((argc-optind) == 2) {   // have device name and sample name
 		strncpy(path, argv[optind++], 256);
-		strncpy(tonename, l_basename(argv[optind]), 8);
+		strncpy(param.tonename, l_basename(argv[optind]), 8);
 	}
 
 	// now we can begin
@@ -142,9 +142,8 @@ int main (int argc, char **argv) {
 		fr_len = wave_info.frames;
 	}
 	
-	printf("%d\n", sizeof(toneparam_t));
-	
-	printf("%s %d %d\n", tonename, bl_len, fr_len);
+	dummy();
+	printf("%s %d %d\n", param.tonename, bl_len, fr_len);
 	sf_close(wave);
 	fclose(disk);
 }

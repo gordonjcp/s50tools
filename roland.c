@@ -22,6 +22,12 @@
 	
 */
 
+#include <stdio.h>
+#include "roland.h"
+
+// "Default" envelope, like a blank tone
+unsigned char envelope[] = { 0x7f, 0x7f, 0x7f, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x7f };
+
 static void pack_block(short *w_in, char *out) {
 	// turn a block of 12288 samples into 18432 bytes
 	int i, j;
@@ -35,4 +41,6 @@ static void pack_block(short *w_in, char *out) {
 	}
 }
 
-
+void dummy() {
+	printf("%s\n", param.tonename);
+}

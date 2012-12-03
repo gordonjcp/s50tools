@@ -25,7 +25,7 @@ def build(bld):
     # the main program
     bld(
         features = 'c cprogram',
-        source = ['s50tool.c', ],
+        source = ['s50tool.c', 'roland.c', ],
         target = 's50tool',
         uselib = "SNDFILE",
         includes = '. /usr/include')

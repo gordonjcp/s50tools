@@ -36,9 +36,14 @@
 #define TONEDIR_OFFSET  0x11e00
 #define SAMPLE_OFFSET   0x12000
 
-// "Default" envelope, like a blank tone
-unsigned char envelope[] = { 0x7f, 0x7f, 0x7f, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x7f, 0x00, 0x7f };
-
+// internal parameters
+struct {
+	int tone;
+	int bank;
+	int start;
+	int rootkey;
+	char tonename[8];   // name of tone, derived from sample name
+} param;
 
 
 // tone directory entries
@@ -138,5 +143,8 @@ typedef struct {
 	unsigned char	afterTouchSwitch;
 	unsigned char	unknown7[2];
 } toneparam_t;
+
+
+//void dummy();
 
 #endif
