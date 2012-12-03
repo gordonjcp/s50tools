@@ -45,7 +45,7 @@ int main (int argc, char **argv) {
 	// parse command line, work out what we're going to do
 	
 	char c;
-	char path[256];		// path for device or filename
+	char path[256] = "/dev/fd0";		// path for device or filename
 	char tonename[8];   // name of tone, derived from sample name
 	// parameters
 	int tone = 1;
@@ -97,28 +97,17 @@ int main (int argc, char **argv) {
 	
 	
 	if ((argc-optind) == 1) {   // only have a sample name
-		
-		
-		//printf("%x\n",l_basename(argv[optind++]));
 		strncpy(tonename, l_basename(argv[optind++]), 8);
 		printf("%s\n", tonename);
 	}
 	
 	if ((argc-optind) == 2) {   // have device name and sample name
-	
+		strncpy(path, argv[optind++], 256);
+		strncpy(tonename, l_basename(argv[optind++]), 8);
+		printf("two options\n");
 	}
-	// if we have one option remaining, it's the sample name
-	// if there's two, the first is the device or image to write to
-	/*
-	printf("remaining: %d\n", argc-optind);
 	
-	    if (optind < argc) {
-        printf ("non-option ARGV-elements: ");
-        while (optind < argc)
-            printf ("%s ", argv[optind++]);
-        printf ("\n");
-    }
-    
-    */
+	
+	printf("device: %s\n  tone: %s\n", path, tonename);
 	
 }
