@@ -4,6 +4,9 @@
 	
 	This file is part of s50tool.
 
+	s50tool.c contains the main command-line processing parts of the
+	sample tool for Roland S-series samplers.
+
 	s50tool is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
