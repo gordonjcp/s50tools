@@ -21,3 +21,18 @@
 	along with s50tool.  If not, see <http://www.gnu.org/licenses/>.
 	
 */
+
+static void pack_block(short *w_in, char *out) {
+	// turn a block of 12288 samples into 18432 bytes
+	int i, j;
+	short s1, s2;
+
+	for(i=0, j=0; i<=12288; i+=2, j+=3) {
+		s1 = w_in[i]; s2 = w_in[i + 1];
+		out[j]=s1>>8;
+		out[j+1]=(s1 & 0x00f0) | (s2 & 0x00f0)>>4;
+		out[j+2]=s2>>8;
+	}
+}
+
+

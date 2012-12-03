@@ -28,6 +28,8 @@
 #include <string.h>
 #include <sndfile.h>
 
+#include "roland.h"
+
 
 void usage() {
 	// show some quick help
@@ -139,6 +141,8 @@ int main (int argc, char **argv) {
 		bl_len = (wave_info.frames/12288)+1;
 		fr_len = wave_info.frames;
 	}
+	
+	printf("%d\n", sizeof(toneparam_t));
 	
 	printf("%s %d %d\n", tonename, bl_len, fr_len);
 	sf_close(wave);
