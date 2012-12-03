@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sndfile.h>
+
 
 void usage() {
 	// show some quick help
@@ -47,6 +49,12 @@ int main (int argc, char **argv) {
 	char c;
 	char path[256] = "/dev/fd0";		// path for device or filename
 	char tonename[8];   // name of tone, derived from sample name
+	FILE *disk;
+	SNDFILE *wave;
+	SF_INFO wave_info;
+
+	int bl_len, fr_len;
+
 	// parameters
 	int tone = 1;
 	int bank = 0;
@@ -93,21 +101,43 @@ int main (int argc, char **argv) {
 		usage();
 		exit(1);
 	}
-	
-	
-	
+
 	if ((argc-optind) == 1) {   // only have a sample name
-		strncpy(tonename, l_basename(argv[optind++]), 8);
-		printf("%s\n", tonename);
+		strncpy(tonename, l_basename(argv[optind]), 8);
 	}
 	
 	if ((argc-optind) == 2) {   // have device name and sample name
 		strncpy(path, argv[optind++], 256);
-		strncpy(tonename, l_basename(argv[optind++]), 8);
-		printf("two options\n");
+		strncpy(tonename, l_basename(argv[optind]), 8);
+	}
+
+	// now we can begin
+	disk = fopen(path, "r+");
+	if (!disk) {
+		printf("Couldn't open %s: %s\n", path, "FIXME show error");
+		exit(1);
+	}
+
+	wave = sf_open(argv[optind], SFM_READ, &wave_info);
+	if (!wave) {
+		printf("Couldn't open %s\n", argv[optind]);
+		exit(1);
+	}
+	if (wave_info.channels > 1) {
+		printf("Needs to be a mono sample\n");
+		exit(1);
+	}
+        
+	if (wave_info.frames > 221184) {
+		printf("Wave will be truncated to 18 blocks");
+		bl_len = 18;
+		fr_len = 221184;
+	} else {
+		bl_len = (wave_info.frames/12288)+1;
+		fr_len = wave_info.frames;
 	}
 	
-	
-	printf("device: %s\n  tone: %s\n", path, tonename);
-	
+	printf("%s %d %d\n", tonename, bl_len, fr_len);
+	sf_close(wave);
+	fclose(disk);
 }
